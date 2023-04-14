@@ -1,13 +1,19 @@
 import React from "react";
 import {
+  Badge,
   Card,
+  Col,
   Container,
   Input,
+  Row,
+  Switch,
   Table,
   Text,
+  Tooltip,
   useTheme,
 } from "@nextui-org/react";
 import { FaSearch } from "react-icons/fa";
+import { MdDownload } from "react-icons/md";
 
 const columns = [
   {
@@ -157,6 +163,62 @@ const Home = () => {
     alert("To be implemented!");
   };
 
+  const renderCell = (row, columnKey) => {
+    const cellValue = row[columnKey];
+
+    switch (columnKey) {
+      case "name":
+        return (
+          <Col>
+            <Row>
+              <Text css={{ fontSize: 15 }}>{cellValue}</Text>
+            </Row>
+          </Col>
+        );
+        break;
+      case "host":
+        return (
+          <Badge color="success" variant="flat" css={{ fontSize: 15 }}>
+            {cellValue}
+          </Badge>
+        );
+        break;
+      case "location":
+        return (
+          <Col>
+            <Row>
+              <Text css={{ fontSize: 15 }}>{cellValue}</Text>
+            </Row>
+          </Col>
+        );
+        break;
+      case "size":
+        return (
+          <Badge isSquared css={{ fontSize: 15, fontWeight: 500 }}>
+            {cellValue}
+          </Badge>
+        );
+        break;
+      case "action":
+        return (
+          <Row justify="center" align="center">
+            <Col css={{ d: "flex", justifyContent: "center" }}>
+              <Tooltip content="Download">
+                <MdDownload
+                  style={{ cursor: "pointer" }}
+                  color="#fff"
+                  onClick={() => console.log("Download")}
+                />
+              </Tooltip>
+            </Col>
+          </Row>
+        );
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <Container style={{ position: "relative", width: "100%" }}>
       {/* Search bar */}
@@ -186,7 +248,7 @@ const Home = () => {
         />
       </div>
       {/* Table */}
-      {/* <div>
+      <div>
         <Table
           bordered
           shadow={false}
@@ -195,17 +257,22 @@ const Home = () => {
           css={{
             height: "auto",
             minWidth: "100%",
-          }}
-          selectionMode="multiple">
+          }}>
           <Table.Header columns={columns}>
             {(column) => (
-              <Table.Column key={column?.key}>{column?.label}</Table.Column>
+              <Table.Column
+                key={column?.key}
+                align={column?.key === "action" ? "center" : "start"}>
+                {column?.label}
+              </Table.Column>
             )}
           </Table.Header>
           <Table.Body items={rows}>
             {(item) => (
               <Table.Row key={item?.key}>
-                {(columnKey) => <Table.Cell>{item[columnKey]}</Table.Cell>}
+                {(columnKey) => (
+                  <Table.Cell>{renderCell(item, columnKey)}</Table.Cell>
+                )}
               </Table.Row>
             )}
           </Table.Body>
@@ -217,15 +284,15 @@ const Home = () => {
             onPageChange={(page) => console.log({ page })}
           />
         </Table>
-      </div> */}
+      </div>
       {/* History */}
-      <div>
+      {/* <div>
         <Text h3>History</Text>
         <div
           style={{
             height: "0.2vh",
             width: "100%",
-            backgroundColor: theme.colors.white,
+            backgroundColor: "#fff",
           }}
         />
         <div
@@ -244,7 +311,7 @@ const Home = () => {
             </Card>
           ))}
         </div>
-      </div>
+      </div> */}
     </Container>
   );
 };
