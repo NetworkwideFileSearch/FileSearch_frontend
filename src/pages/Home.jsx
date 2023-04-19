@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Badge,
   Button,
@@ -7,6 +7,7 @@ import {
   Container,
   Grid,
   Input,
+  Loading,
   Row,
   Switch,
   Table,
@@ -17,6 +18,8 @@ import {
 import { FaSearch } from "react-icons/fa";
 import { MdDownload } from "react-icons/md";
 import { IoRefreshOutline } from "react-icons/io5";
+import useGetAllHosts from "../hooks/useGetAllHosts";
+import useGetSearch from "../hooks/useGetSearch";
 
 const columns = [
   {
@@ -41,99 +44,99 @@ const columns = [
   },
 ];
 
-const rows = [
-  {
-    key: "1",
-    name: "Resume.pdf",
-    host: "192.168.143.27",
-    location: "D:/Me/Placement/Resume/Resume.pdf",
-    size: "9MB",
-  },
-  {
-    key: "2",
-    name: "Me.pdf",
-    host: "192.168.45.27",
-    location: "D:/Me/Placement/Resume/Resume.pdf",
-    size: "12MB",
-  },
-  {
-    key: "3",
-    name: "Resume.pdf",
-    host: "100.168.143.27",
-    location: "D:/Me/Placement/Resume/Resume.pdf",
-    size: "9MB",
-  },
-  {
-    key: "4",
-    name: "Me.pdf",
-    host: "192.168.143.27",
-    location: "D:/Me/Placement/Resume/Resume.pdf",
-    size: "12MB",
-  },
-  {
-    key: "5",
-    name: "Resume.pdf",
-    host: "192.78.143.27",
-    location: "D:/Me/Placement/Resume/Resume.pdf",
-    size: "12MB",
-  },
-  {
-    key: "6",
-    name: "Hello.pdf",
-    host: "192.168.143.27",
-    location: "D:/Me/Placement/Resume/Resume.pdf",
-    size: "8MB",
-  },
-  {
-    key: "7",
-    name: "Resume.pdf",
-    host: "192.168.143.27",
-    location: "D:/Me/Placement/Resume/Resume.pdf",
-    size: "12MB",
-  },
-  {
-    key: "8",
-    name: "No.pdf",
-    host: "192.168.143.27",
-    location: "D:/Me/Placement/Resume/Resume.pdf",
-    size: "8MB",
-  },
-  {
-    key: "9",
-    name: "Resume.pdf",
-    host: "192.168.143.27",
-    location: "D:/Me/Placement/Resume/Resume.pdf",
-    size: "12MB",
-  },
-  {
-    key: "10",
-    name: "Resume.pdf",
-    host: "192.168.143.27",
-    location: "D:/Me/Placement/Resume/Resume.pdf",
-    size: "8MB",
-  },
-  {
-    key: "11",
-    name: "Resume.pdf",
-    host: "192.168.143.27",
-    location: "D:/Me/Placement/Resume/Resume.pdf",
-    size: "12MB",
-  },
-  {
-    key: "12",
-    name: "Resume.pdf",
-    host: "192.168.143.27",
-    location: "D:/Me/Placement/Resume/Resume.pdf",
-    size: "8MB",
-  },
-  {
-    key: "13",
-    name: "Resume.pdf",
-    host: "192.168.143.27",
-    location: "D:/Me/Placement/Resume/Resume.pdf",
-    size: "12MB",
-  },
-];
+// const rows = [
+//   {
+//     key: "1",
+//     name: "Resume.pdf",
+//     host: "192.168.143.27",
+//     location: "D:/Me/Placement/Resume/Resume.pdf",
+//     size: "9MB",
+//   },
+//   {
+//     key: "2",
+//     name: "Me.pdf",
+//     host: "192.168.45.27",
+//     location: "D:/Me/Placement/Resume/Resume.pdf",
+//     size: "12MB",
+//   },
+//   {
+//     key: "3",
+//     name: "Resume.pdf",
+//     host: "100.168.143.27",
+//     location: "D:/Me/Placement/Resume/Resume.pdf",
+//     size: "9MB",
+//   },
+//   {
+//     key: "4",
+//     name: "Me.pdf",
+//     host: "192.168.143.27",
+//     location: "D:/Me/Placement/Resume/Resume.pdf",
+//     size: "12MB",
+//   },
+//   {
+//     key: "5",
+//     name: "Resume.pdf",
+//     host: "192.78.143.27",
+//     location: "D:/Me/Placement/Resume/Resume.pdf",
+//     size: "12MB",
+//   },
+//   {
+//     key: "6",
+//     name: "Hello.pdf",
+//     host: "192.168.143.27",
+//     location: "D:/Me/Placement/Resume/Resume.pdf",
+//     size: "8MB",
+//   },
+//   {
+//     key: "7",
+//     name: "Resume.pdf",
+//     host: "192.168.143.27",
+//     location: "D:/Me/Placement/Resume/Resume.pdf",
+//     size: "12MB",
+//   },
+//   {
+//     key: "8",
+//     name: "No.pdf",
+//     host: "192.168.143.27",
+//     location: "D:/Me/Placement/Resume/Resume.pdf",
+//     size: "8MB",
+//   },
+//   {
+//     key: "9",
+//     name: "Resume.pdf",
+//     host: "192.168.143.27",
+//     location: "D:/Me/Placement/Resume/Resume.pdf",
+//     size: "12MB",
+//   },
+//   {
+//     key: "10",
+//     name: "Resume.pdf",
+//     host: "192.168.143.27",
+//     location: "D:/Me/Placement/Resume/Resume.pdf",
+//     size: "8MB",
+//   },
+//   {
+//     key: "11",
+//     name: "Resume.pdf",
+//     host: "192.168.143.27",
+//     location: "D:/Me/Placement/Resume/Resume.pdf",
+//     size: "12MB",
+//   },
+//   {
+//     key: "12",
+//     name: "Resume.pdf",
+//     host: "192.168.143.27",
+//     location: "D:/Me/Placement/Resume/Resume.pdf",
+//     size: "8MB",
+//   },
+//   {
+//     key: "13",
+//     name: "Resume.pdf",
+//     host: "192.168.143.27",
+//     location: "D:/Me/Placement/Resume/Resume.pdf",
+//     size: "12MB",
+//   },
+// ];
 
 const history = [
   {
@@ -158,31 +161,40 @@ const history = [
   },
 ];
 
-const hosts = [
-  "192.168.0.225",
-  "192.168.0.225",
-  "192.168.0.225",
-  "192.168.0.225",
-  "192.168.0.225",
-  "192.168.0.225",
-  "192.168.0.225",
-  "192.168.0.225",
-  "192.168.0.225",
-  "192.168.0.225",
-  "192.168.0.225",
-  "192.168.0.225",
-  "192.168.0.225",
-  "192.168.0.225",
-  "192.168.0.225",
-];
+// const hosts = [
+//   "192.168.0.225",
+//   "192.168.0.225",
+//   "192.168.0.225",
+//   "192.168.0.225",
+//   "192.168.0.225",
+//   "192.168.0.225",
+//   "192.168.0.225",
+//   "192.168.0.225",
+//   "192.168.0.225",
+//   "192.168.0.225",
+//   "192.168.0.225",
+//   "192.168.0.225",
+//   "192.168.0.225",
+//   "192.168.0.225",
+//   "192.168.0.225",
+// ];
 
 const Home = () => {
   const { theme } = useTheme();
+  const [searchText, setSearchText] = useState("");
+
+  const {
+    data: hosts,
+    isLoading: hostLoading,
+    refetch,
+    isRefetching,
+  } = useGetAllHosts();
+  const { mutate, isLoading: searchLoading, data: rows } = useGetSearch();
 
   const handleSearch = () => {
-    console.log("Search Button clicked");
-    alert("To be implemented!");
+    mutate(searchText);
   };
+  console.log("SEARCH -> ", rows);
 
   const renderCell = (row, columnKey) => {
     const cellValue = row[columnKey];
@@ -256,11 +268,17 @@ const Home = () => {
           aria-label="Search for a file"
           style={{ paddingLeft: "2rem" }}
           contentRightStyling={false}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSearch();
+            }
+          }}
           contentRight={
             <FaSearch
               style={{ cursor: "pointer", marginRight: "1rem" }}
               onClick={() => {
-                console.log("first");
                 handleSearch();
               }}
               color={theme.colors.accents5}
@@ -269,7 +287,7 @@ const Home = () => {
         />
       </div>
       {/* Table */}
-      {/* <div>
+      <div>
         <Table
           bordered
           shadow={false}
@@ -288,7 +306,7 @@ const Home = () => {
               </Table.Column>
             )}
           </Table.Header>
-          <Table.Body items={rows}>
+          <Table.Body items={rows || []}>
             {(item) => (
               <Table.Row key={item?.key}>
                 {(columnKey) => (
@@ -305,9 +323,9 @@ const Home = () => {
             onPageChange={(page) => console.log({ page })}
           />
         </Table>
-      </div> */}
+      </div>
       {/* History */}
-      <Grid.Container gap={4}>
+      {/* <Grid.Container gap={4}>
         <Grid direction="column" xs={9}>
           <h1 style={{ fontSize: 28, fontWeight: 500 }}>History</h1>
           <div
@@ -363,21 +381,35 @@ const Home = () => {
                 paddingRight: 15,
                 overflowY: "scroll",
               }}>
-              {hosts.map((host) => (
-                <Card
-                  isPressable
-                  variant="bordered"
-                  css={{ mw: "100%", mb: "$10" }}>
-                  <Card.Body style={{ textAlign: "center", padding: 8 }}>
-                    <Text>{host}</Text>
-                  </Card.Body>
-                </Card>
-              ))}
+              {hostLoading || isRefetching ? (
+                <div
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}>
+                  <Loading type="spinner" size="xl" color="success" />
+                </div>
+              ) : (
+                (hosts ?? []).map((host) => (
+                  <Card
+                    isPressable
+                    variant="bordered"
+                    css={{ mw: "100%", mb: "$10" }}>
+                    <Card.Body style={{ textAlign: "center", padding: 8 }}>
+                      <Text>{host}</Text>
+                    </Card.Body>
+                  </Card>
+                ))
+              )}
             </div>
             <Card.Divider />
             <Card.Footer>
               <Row justify="center">
                 <Button
+                  onClick={() => refetch()}
                   size="md"
                   style={{ backgroundColor: "#17c964" }}
                   icon={<IoRefreshOutline color="#fff" size={22} />}>
@@ -387,7 +419,7 @@ const Home = () => {
             </Card.Footer>
           </Card>
         </Grid>
-      </Grid.Container>
+      </Grid.Container> */}
     </Container>
   );
 };
