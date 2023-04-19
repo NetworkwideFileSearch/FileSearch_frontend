@@ -1,9 +1,11 @@
 import React from "react";
 import {
   Badge,
+  Button,
   Card,
   Col,
   Container,
+  Grid,
   Input,
   Row,
   Switch,
@@ -14,6 +16,7 @@ import {
 } from "@nextui-org/react";
 import { FaSearch } from "react-icons/fa";
 import { MdDownload } from "react-icons/md";
+import { IoRefreshOutline } from "react-icons/io5";
 
 const columns = [
   {
@@ -155,6 +158,24 @@ const history = [
   },
 ];
 
+const hosts = [
+  "192.168.0.225",
+  "192.168.0.225",
+  "192.168.0.225",
+  "192.168.0.225",
+  "192.168.0.225",
+  "192.168.0.225",
+  "192.168.0.225",
+  "192.168.0.225",
+  "192.168.0.225",
+  "192.168.0.225",
+  "192.168.0.225",
+  "192.168.0.225",
+  "192.168.0.225",
+  "192.168.0.225",
+  "192.168.0.225",
+];
+
 const Home = () => {
   const { theme } = useTheme();
 
@@ -224,7 +245,7 @@ const Home = () => {
       {/* Search bar */}
       <div
         style={{
-          marginTop: "5%",
+          paddingTop: "5%",
           marginLeft: "25%",
           marginBottom: "3%",
           width: "50%",
@@ -248,7 +269,7 @@ const Home = () => {
         />
       </div>
       {/* Table */}
-      <div>
+      {/* <div>
         <Table
           bordered
           shadow={false}
@@ -284,34 +305,89 @@ const Home = () => {
             onPageChange={(page) => console.log({ page })}
           />
         </Table>
-      </div>
+      </div> */}
       {/* History */}
-      <div>
-        <h1 style={{ fontSize: 28, fontWeight: 500 }}>History</h1>
-        <div
-          style={{
-            height: "0.2vh",
-            width: "100%",
-            backgroundColor: "#fff",
-          }}
-        />
-        <div
-          style={{
-            marginTop: "2%",
-          }}>
-          {history.map((histElement) => (
-            <Card
-              key={histElement?.key}
-              isPressable
-              variant="bordered"
-              css={{ mw: "100%", mb: "$10" }}>
-              <Card.Body>
-                <Text>{histElement?.name}</Text>
-              </Card.Body>
-            </Card>
-          ))}
-        </div>
-      </div>
+      <Grid.Container gap={4}>
+        <Grid direction="column" xs={9}>
+          <h1 style={{ fontSize: 28, fontWeight: 500 }}>History</h1>
+          <div
+            style={{
+              height: "0.2vh",
+              width: "100%",
+              backgroundColor: "#fff",
+            }}
+          />
+          <div
+            style={{
+              marginTop: "2%",
+            }}>
+            {history.map((histElement) => (
+              <Card
+                key={histElement?.key}
+                isPressable
+                variant="bordered"
+                css={{ mw: "100%", mb: "$10" }}>
+                <Card.Body>
+                  <Text>{histElement?.name}</Text>
+                </Card.Body>
+              </Card>
+            ))}
+          </div>
+        </Grid>
+        <Grid xs={3}>
+          <Card css={{ mw: "100%", mh: "70vh" }}>
+            <Card.Header
+              style={{
+                justifyContent: "space-between",
+                paddingLeft: 22,
+                paddingRight: 22,
+              }}>
+              <Text b>Available Hosts</Text>
+              <span class="relative flex h-3 w-3">
+                <span
+                  class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75"
+                  style={{ backgroundColor: "#17c964" }}
+                />
+                <span
+                  class="relative inline-flex rounded-full h-3 w-3"
+                  style={{ backgroundColor: "#17c964" }}
+                />
+              </span>
+            </Card.Header>
+            <Card.Divider />
+            <div
+              style={{
+                marginTop: 15,
+                flex: 1,
+                paddingLeft: 15,
+                paddingRight: 15,
+                overflowY: "scroll",
+              }}>
+              {hosts.map((host) => (
+                <Card
+                  isPressable
+                  variant="bordered"
+                  css={{ mw: "100%", mb: "$10" }}>
+                  <Card.Body style={{ textAlign: "center", padding: 8 }}>
+                    <Text>{host}</Text>
+                  </Card.Body>
+                </Card>
+              ))}
+            </div>
+            <Card.Divider />
+            <Card.Footer>
+              <Row justify="center">
+                <Button
+                  size="md"
+                  style={{ backgroundColor: "#17c964" }}
+                  icon={<IoRefreshOutline color="#fff" size={22} />}>
+                  Refresh
+                </Button>
+              </Row>
+            </Card.Footer>
+          </Card>
+        </Grid>
+      </Grid.Container>
     </Container>
   );
 };
