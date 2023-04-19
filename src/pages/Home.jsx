@@ -7,6 +7,7 @@ import {
     Container,
     Grid,
     Input,
+    Loading,
     Row,
     Switch,
     Table,
@@ -15,9 +16,11 @@ import {
     useTheme,
 } from "@nextui-org/react";
 import { FaSearch } from "react-icons/fa";
-import { MdDownload } from "react-icons/md";
+import { MdClose, MdDownload } from "react-icons/md";
 import { IoRefreshOutline } from "react-icons/io5";
 import { AnimatePresence, motion } from "framer-motion";
+import useGetAllHosts from "../hooks/useGetAllHosts";
+import useGetSearch from "../hooks/useGetSearch";
 
 const columns = [
     {
@@ -39,100 +42,6 @@ const columns = [
     {
         key: "action",
         label: "Action",
-    },
-];
-
-const rows = [
-    {
-        key: "1",
-        name: "Resume.pdf",
-        host: "192.168.143.27",
-        location: "D:/Me/Placement/Resume/Resume.pdf",
-        size: "9MB",
-    },
-    {
-        key: "2",
-        name: "Me.pdf",
-        host: "192.168.45.27",
-        location: "D:/Me/Placement/Resume/Resume.pdf",
-        size: "12MB",
-    },
-    {
-        key: "3",
-        name: "Resume.pdf",
-        host: "100.168.143.27",
-        location: "D:/Me/Placement/Resume/Resume.pdf",
-        size: "9MB",
-    },
-    {
-        key: "4",
-        name: "Me.pdf",
-        host: "192.168.143.27",
-        location: "D:/Me/Placement/Resume/Resume.pdf",
-        size: "12MB",
-    },
-    {
-        key: "5",
-        name: "Resume.pdf",
-        host: "192.78.143.27",
-        location: "D:/Me/Placement/Resume/Resume.pdf",
-        size: "12MB",
-    },
-    {
-        key: "6",
-        name: "Hello.pdf",
-        host: "192.168.143.27",
-        location: "D:/Me/Placement/Resume/Resume.pdf",
-        size: "8MB",
-    },
-    {
-        key: "7",
-        name: "Resume.pdf",
-        host: "192.168.143.27",
-        location: "D:/Me/Placement/Resume/Resume.pdf",
-        size: "12MB",
-    },
-    {
-        key: "8",
-        name: "No.pdf",
-        host: "192.168.143.27",
-        location: "D:/Me/Placement/Resume/Resume.pdf",
-        size: "8MB",
-    },
-    {
-        key: "9",
-        name: "Resume.pdf",
-        host: "192.168.143.27",
-        location: "D:/Me/Placement/Resume/Resume.pdf",
-        size: "12MB",
-    },
-    {
-        key: "10",
-        name: "Resume.pdf",
-        host: "192.168.143.27",
-        location: "D:/Me/Placement/Resume/Resume.pdf",
-        size: "8MB",
-    },
-    {
-        key: "11",
-        name: "Resume.pdf",
-        host: "192.168.143.27",
-        location: "D:/Me/Placement/Resume/Resume.pdf",
-        size: "12MB",
-    },
-    {
-        key: "12",
-        name: "Resume.pdf",
-        host: "192.168.143.27",
-        location: "D:/Me/Placement/Resume/Resume.pdf",
-        size: "8MB",
-    },
-    {
-        key: "13",
-        name: "Resume.pdf",
-        host: "192.168.143.27",
-        location: "D:/Me/Placement/Resume/Resume.pdf",
-        size: "12MB",
     },
 ];
 
@@ -159,31 +68,27 @@ const history = [
     },
 ];
 
-const hosts = [
-    "192.168.0.225",
-    "192.168.0.225",
-    "192.168.0.225",
-    "192.168.0.225",
-    "192.168.0.225",
-    "192.168.0.225",
-    "192.168.0.225",
-    "192.168.0.225",
-    "192.168.0.225",
-    "192.168.0.225",
-    "192.168.0.225",
-    "192.168.0.225",
-    "192.168.0.225",
-    "192.168.0.225",
-    "192.168.0.225",
-];
-
 const Home = () => {
     const { theme } = useTheme();
+    const [searchText, setSearchText] = useState("");
     const [showTable, setShowTable] = useState(false);
 
+    const {
+        data: hosts,
+        isLoading: hostLoading,
+        refetch,
+        isRefetching,
+    } = useGetAllHosts();
+    const {
+        mutate,
+        isLoading: searchLoading,
+        isSuccess: searchLoaded,
+        data: rows,
+    } = useGetSearch();
+
     const handleSearch = () => {
-        console.log("Search Button clicked");
-        alert("To be implemented!");
+        mutate(searchText);
+        setShowTable(true);
     };
 
     const renderCell = (row, columnKey) => {
@@ -252,19 +157,45 @@ const Home = () => {
             <div className="w-full flex flex-row items-center justify-center py-10">
                 <Input
                     placeholder="Search for a file"
-                    width="50%"
+                    width="100%"
+                    css={{
+                        h: "50px",
+                    }}
                     aria-label="Search for a file"
                     className="shadow-md bg-transparent"
                     contentRightStyling={false}
+                    value={searchText}
+                    onChange={(e) => setSearchText(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            handleSearch();
+                        }
+                    }}
                     contentRight={
-                        <FaSearch
-                            style={{ cursor: "pointer", marginRight: "1rem" }}
-                            onClick={() => {
-                                console.log("first");
-                                handleSearch();
-                            }}
-                            color={theme.colors.accents5}
-                        />
+                        searchText.length > 0 ? (
+                            <MdClose
+                                style={{
+                                    cursor: "pointer",
+                                    marginRight: "1rem",
+                                }}
+                                onClick={() => {
+                                    setSearchText("");
+                                    setShowTable(false);
+                                }}
+                                color={theme.colors.accents5}
+                            />
+                        ) : (
+                            <FaSearch
+                                style={{
+                                    cursor: "pointer",
+                                    marginRight: "1rem",
+                                }}
+                                onClick={() => {
+                                    handleSearch();
+                                }}
+                                color={theme.colors.accents5}
+                            />
+                        )
                     }
                 />
             </div>
@@ -272,7 +203,38 @@ const Home = () => {
             <div className="w-full relative">
                 <AnimatePresence>
                     {/* Table */}
-                    {showTable && (
+                    {searchLoading && (
+                        <motion.div
+                            key="loading"
+                            initial={{ y: 10, opacity: 0, scale: 0.95 }}
+                            animate={{ y: 0, opacity: 1, scale: 1 }}
+                            exit={{ y: 10, opacity: 0, scale: 0.95 }}
+                            transition={{
+                                duration: 0.3,
+                            }}
+                            style={{
+                                position: "absolute",
+                                width: "100%",
+                            }}
+                        >
+                            <div
+                                style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                }}
+                            >
+                                <Loading
+                                    type="spinner"
+                                    size="xl"
+                                    color="success"
+                                />
+                            </div>
+                        </motion.div>
+                    )}
+                    {showTable && searchLoaded && (
                         <motion.div
                             key="table"
                             initial={{ y: 10, opacity: 0, scale: 0.95 }}
@@ -311,7 +273,7 @@ const Home = () => {
                                         </Table.Column>
                                     )}
                                 </Table.Header>
-                                <Table.Body items={rows}>
+                                <Table.Body items={rows ?? []}>
                                     {(item) => (
                                         <Table.Row key={item?.key}>
                                             {(columnKey) => (
@@ -329,6 +291,7 @@ const Home = () => {
                                     shadow
                                     noMargin
                                     align="center"
+                                    color={"success"}
                                     rowsPerPage={8}
                                     onPageChange={(page) =>
                                         console.log({ page })
@@ -374,9 +337,10 @@ const Home = () => {
                                         </h1>
                                         <div
                                             style={{
-                                                height: "0.2vh",
+                                                height: "1px",
                                                 width: "100%",
-                                                backgroundColor: "#fff",
+                                                marginTop: "10px",
+                                                backgroundColor: "grey",
                                             }}
                                         />
                                         <div
@@ -447,30 +411,51 @@ const Home = () => {
                                                 overflowY: "scroll",
                                             }}
                                         >
-                                            {hosts.map((host) => (
-                                                <Card
-                                                    isPressable
-                                                    variant="bordered"
-                                                    css={{
-                                                        mw: "100%",
-                                                        mb: "$10",
+                                            {hostLoading || isRefetching ? (
+                                                <div
+                                                    style={{
+                                                        width: "100%",
+                                                        height: "100%",
+                                                        display: "flex",
+                                                        justifyContent:
+                                                            "center",
+                                                        alignItems: "center",
                                                     }}
                                                 >
-                                                    <Card.Body
-                                                        style={{
-                                                            textAlign: "center",
-                                                            padding: 8,
+                                                    <Loading
+                                                        type="spinner"
+                                                        size="xl"
+                                                        color="success"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                (hosts ?? []).map((host) => (
+                                                    <Card
+                                                        isPressable
+                                                        variant="bordered"
+                                                        css={{
+                                                            mw: "100%",
+                                                            mb: "$10",
                                                         }}
                                                     >
-                                                        <Text>{host}</Text>
-                                                    </Card.Body>
-                                                </Card>
-                                            ))}
+                                                        <Card.Body
+                                                            style={{
+                                                                textAlign:
+                                                                    "center",
+                                                                padding: 8,
+                                                            }}
+                                                        >
+                                                            <Text>{host}</Text>
+                                                        </Card.Body>
+                                                    </Card>
+                                                ))
+                                            )}
                                         </div>
                                         <Card.Divider />
                                         <Card.Footer>
                                             <Row justify="center">
                                                 <Button
+                                                    onClick={() => refetch()}
                                                     size="md"
                                                     style={{
                                                         backgroundColor:
@@ -495,9 +480,9 @@ const Home = () => {
                 </AnimatePresence>
             </div>
 
-            <Button onClick={() => setShowTable((prev) => !prev)}>
+            {/* <Button onClick={() => setShowTable((prev) => !prev)}>
                 Toggle
-            </Button>
+            </Button> */}
         </Container>
     );
 };

@@ -15,3 +15,7 @@ body {
 * {
     font-family: "Poppins", sans-serif !important;
 }
+
+.nextui-input-container--input {
+    height: 100px;
+}
