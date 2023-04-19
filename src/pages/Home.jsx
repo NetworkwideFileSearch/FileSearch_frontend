@@ -392,7 +392,7 @@ const Home = () => {
                           }}>
                           <Loading type="spinner" size="xl" color="success" />
                         </div>
-                      ) : hosts.length > 0 ? (
+                      ) : hosts && hosts.length > 0 ? (
                         (hosts ?? []).map((host) => (
                           <Card
                             isPressable
