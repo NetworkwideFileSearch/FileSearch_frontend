@@ -286,8 +286,8 @@ const Home = () => {
         </Table>
       </div>
       {/* History */}
-      {/* <div>
-        <Text h3>History</Text>
+      <div>
+        <h1 style={{ fontSize: 28, fontWeight: 500 }}>History</h1>
         <div
           style={{
             height: "0.2vh",
@@ -311,7 +311,7 @@ const Home = () => {
             </Card>
           ))}
         </div>
-      </div> */}
+      </div>
     </Container>
   );
 };
