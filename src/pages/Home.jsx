@@ -71,12 +71,13 @@ const Home = () => {
     if (localStorage.getItem("history")) {
       let tempArrStr = localStorage.getItem("history");
       let tempArr = JSON.parse(tempArrStr);
-      paramText.length > 0 && tempArr.push(paramText);
-      localStorage.setItem("history", JSON.stringify(tempArr));
+      let newArr = paramText.length > 0 && [paramText, ...tempArr];
+
+      localStorage.setItem("history", JSON.stringify(newArr));
     } else {
       let tempArr = [];
-      paramText.length > 0 && tempArr.push(paramText);
-      localStorage.setItem("history", JSON.stringify(tempArr));
+      let newArr = paramText.length > 0 && [paramText, ...tempArr];
+      localStorage.setItem("history", JSON.stringify(newArr));
     }
   };
 
@@ -428,14 +429,32 @@ const Home = () => {
                               mw: "100%",
                               mb: "$10",
                               mt: "$10",
+                              display: "flex",
+                              justifyContent: "center",
+                              alignItems: "center",
                             }}>
-                            <Card.Body
+                            <Tooltip
+                              content={
+                                host?.hostnames
+                                  ? host?.hostnames.split(".")[0]
+                                  : "Unknown"
+                              }
                               style={{
-                                textAlign: "center",
-                                padding: 8,
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
                               }}>
-                              <Text>{host}</Text>
-                            </Card.Body>
+                              <Card.Body
+                                style={{
+                                  display: "flex",
+                                  justifyContent: "center",
+                                  alignItems: "center",
+                                  textAlign: "center",
+                                  padding: 8,
+                                }}>
+                                <Text>{host?.ip}</Text>
+                              </Card.Body>
+                            </Tooltip>
                           </Card>
                         ))
                       ) : (

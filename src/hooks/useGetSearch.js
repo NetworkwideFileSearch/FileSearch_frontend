@@ -40,11 +40,13 @@ const useGetSearch = () => {
               location: row?.location,
               size: humanFileSize(row?.size),
               action: `http://${result}:6969/file?location=${row?.location}`,
+              score: row?.score,
             };
           });
           rows = rows.concat(localRows);
         }
       }
+      rows.sort((a, b) => b.score - a.score);
       return rows;
     },
   });
