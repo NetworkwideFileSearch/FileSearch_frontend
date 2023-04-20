@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Badge,
   Button,
@@ -45,33 +45,11 @@ const columns = [
   },
 ];
 
-const history = [
-  {
-    key: "1",
-    name: "Resume 1.pdf",
-  },
-  {
-    key: "2",
-    name: "Resume 6.pdf",
-  },
-  {
-    key: "3",
-    name: "Resume 5.pdf",
-  },
-  {
-    key: "4",
-    name: "Resume 4.pdf",
-  },
-  {
-    key: "5",
-    name: "Resume 2.pdf",
-  },
-];
-
 const Home = () => {
   const { theme } = useTheme();
   const [searchText, setSearchText] = useState("");
   const [showTable, setShowTable] = useState(false);
+  const [history, setHistory] = useState([]);
 
   const {
     data: hosts,
@@ -86,10 +64,26 @@ const Home = () => {
     data: rows,
   } = useGetSearch();
 
-  const handleSearch = () => {
-    mutate(searchText);
+  const handleSearch = (paramText) => {
+    mutate(paramText);
     setShowTable(true);
+
+    if (localStorage.getItem("history")) {
+      let tempArrStr = localStorage.getItem("history");
+      let tempArr = JSON.parse(tempArrStr);
+      paramText.length > 0 && tempArr.push(paramText);
+      localStorage.setItem("history", JSON.stringify(tempArr));
+    } else {
+      let tempArr = [];
+      paramText.length > 0 && tempArr.push(paramText);
+      localStorage.setItem("history", JSON.stringify(tempArr));
+    }
   };
+
+  useEffect(() => {
+    let tempArr = localStorage.getItem("history");
+    setHistory(JSON.parse(tempArr));
+  }, [showTable]);
 
   const renderCell = (row, columnKey) => {
     const cellValue = row[columnKey];
@@ -135,7 +129,7 @@ const Home = () => {
                 <MdDownload
                   style={{ cursor: "pointer" }}
                   color="#fff"
-                  onClick={() => console.log("Download")}
+                  onClick={() => window.open(cellValue, "_blank")}
                 />
               </Tooltip>
             </Col>
@@ -164,7 +158,7 @@ const Home = () => {
           onChange={(e) => setSearchText(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              handleSearch();
+              handleSearch(searchText);
             }
           }}
           contentRight={
@@ -189,7 +183,7 @@ const Home = () => {
                 onClick={
                   searchText.length > 0
                     ? () => {
-                        handleSearch();
+                        handleSearch(searchText);
                       }
                     : () => {}
                 }
@@ -307,13 +301,31 @@ const Home = () => {
                       height: "70vh",
                       overflowY: "scroll",
                     }}>
-                    <h1
+                    <div
                       style={{
-                        fontSize: 28,
-                        fontWeight: 500,
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
                       }}>
-                      History
-                    </h1>
+                      <h1
+                        style={{
+                          fontSize: 28,
+                          fontWeight: 500,
+                        }}>
+                        History
+                      </h1>
+                      <Button
+                        disabled={history && history.length > 0 ? false : true}
+                        size="sm"
+                        onClick={() => {
+                          localStorage.removeItem("history");
+                          let tempArr = localStorage.getItem("history");
+                          setHistory(JSON.parse(tempArr));
+                        }}
+                        style={{ backgroundColor: "#17c964" }}>
+                        Clear
+                      </Button>
+                    </div>
                     <div
                       style={{
                         height: "1px",
@@ -326,20 +338,35 @@ const Home = () => {
                       style={{
                         marginTop: "2%",
                       }}>
-                      {history.map((histElement) => (
-                        <Card
-                          key={histElement?.key}
-                          isPressable
-                          variant="bordered"
-                          css={{
-                            mw: "100%",
-                            mb: "$10",
+                      {history && history.length > 0 ? (
+                        (history ?? []).map((histElement) => (
+                          <Card
+                            isPressable
+                            onClick={() => {
+                              setSearchText(histElement);
+                              handleSearch(histElement);
+                            }}
+                            variant="bordered"
+                            css={{
+                              mw: "100%",
+                              mb: "$10",
+                            }}>
+                            <Card.Body>
+                              <Text>{histElement}</Text>
+                            </Card.Body>
+                          </Card>
+                        ))
+                      ) : (
+                        <div
+                          style={{
+                            display: "flex",
+                            height: "50vh",
+                            justifyContent: "center",
+                            alignItems: "center",
                           }}>
-                          <Card.Body>
-                            <Text>{histElement?.name}</Text>
-                          </Card.Body>
-                        </Card>
-                      ))}
+                          <Text>Your search history will appear here</Text>
+                        </div>
+                      )}
                     </div>
                   </Container>
                 </Grid>

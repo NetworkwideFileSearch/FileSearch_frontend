@@ -39,6 +39,7 @@ const useGetSearch = () => {
               host: result,
               location: row?.location,
               size: humanFileSize(row?.size),
+              action: `http://${result}:6969/file?location=${row?.location}`,
             };
           });
           rows = rows.concat(localRows);
